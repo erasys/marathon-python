@@ -119,11 +119,12 @@ class MarathonClient(object):
                     headers={'Accept': 'text/event-stream'},
                     auth=self.auth
                 )
+                if response.ok:
+                    return response.iter_lines()
+                response.raise_for_status()
             except Exception as e:
                 marathon.log.error('Error while calling %s: %s', url, e.message)
 
-            if response.ok:
-                return response.iter_lines()
 
         raise MarathonError('No remaining Marathon servers to try')
 
